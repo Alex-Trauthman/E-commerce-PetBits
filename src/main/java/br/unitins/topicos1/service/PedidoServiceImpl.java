@@ -100,6 +100,8 @@ public class PedidoServiceImpl implements PedidoService {
                 racaoBanco.setEstoque(racaoBanco.getEstoque()-racaoDTO.quantidade());
                 racaoPedidoRepository.persist(racaoPedido);
                 racao.add(racaoPedido);
+            }else{
+                validarQuantidade(racaoBanco.getEstoque(), racaoDTO.quantidade());
             }
         }
         
@@ -120,6 +122,8 @@ public class PedidoServiceImpl implements PedidoService {
                 brinquedoPedido.setBrinquedo(brinquedoBanco);
                 brinquedoPedidoRepository.persist(brinquedoPedido);
                 brinquedo.add(brinquedoPedido);
+            }else{
+                validarQuantidade(brinquedoBanco.getEstoque(), brinquedoDTO.quantidade());
             }
         }
         List<PetiscoPedido> petisco = new ArrayList<PetiscoPedido>();
@@ -138,6 +142,8 @@ public class PedidoServiceImpl implements PedidoService {
                 petiscoBanco.setEstoque(petiscoBanco.getEstoque()-petiscoDTO.quantidade());
                 petiscoPedidoRepository.persist(petiscoPedido);
                 petisco.add(petiscoPedido);
+            }else{
+                validarQuantidade(petiscoBanco.getEstoque(), petiscoDTO.quantidade());
             }
         }
         List<RemedioPedido> remedio = new ArrayList<RemedioPedido>();
@@ -156,6 +162,8 @@ public class PedidoServiceImpl implements PedidoService {
                 remedioBanco.setEstoque(remedioBanco.getEstoque()-remedioDTO.quantidade());
                 remedioPedidoRepository.persist(remedioPedido);
                 remedio.add(remedioPedido);
+            }else{
+                validarQuantidade(remedioBanco.getEstoque(), remedioDTO.quantidade());
             }
         }
         pedido.setTotal(total);
@@ -172,6 +180,15 @@ public class PedidoServiceImpl implements PedidoService {
         if (precoReal != precoPedido){
             ValidationError error = new ValidationError("409", "Preço diferente do cadastrado");
             error.addFieldError("username", "Username já cadastrado");
+            return error;
+        }
+        return null;
+    }
+
+    public ValidationError validarQuantidade(Integer quantidadeReal, Integer quantidadePedido) {
+        if (quantidadeReal < quantidadePedido){
+            ValidationError error = new ValidationError("409", "Quantidade maior que o estoque");
+            error.addFieldError("quantidade", "Quantidade maior que o estoque");
             return error;
         }
         return null;

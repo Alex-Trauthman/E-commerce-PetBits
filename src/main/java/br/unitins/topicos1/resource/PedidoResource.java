@@ -56,12 +56,14 @@ public class PedidoResource {
         return Response.status(Status.CREATED).entity(pedidoService.create(dto)).build();
     }
     @POST
+    @Path("/pagar/cartao")
     @RolesAllowed("Cliente")
     public Response pagarCartao(Long id, CartaoCreditoDTO dto) {
         LOGGER.info("Paying pedido with credit card");
         return Response.noContent().build();
     }
     @POST
+    @Path("/pagar/pix")
     @RolesAllowed("Cliente")
     public Response pagarPix(Long id, String chavePix) {
         LOGGER.info("Paying pedido with pix");
