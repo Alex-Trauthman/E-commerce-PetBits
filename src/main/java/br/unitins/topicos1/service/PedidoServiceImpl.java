@@ -91,6 +91,7 @@ public class PedidoServiceImpl implements PedidoService {
             if(racaoDTO.quantidade()>0 && (racaoDTO.quantidade() <= racaoBanco.getEstoque())){
                 racaoService.validarId(racaoDTO.idRacao());
                 RacaoPedido racaoPedido = new RacaoPedido();
+                racaoPedido.setPreco(racaoBanco.getPreco());
                 racaoPedido.setDesconto(racaoDTO.desconto());
                 racaoPedido.setRacao(racaoBanco);
                 racaoPedido.setQuantidade(racaoDTO.quantidade());
@@ -111,6 +112,7 @@ public class PedidoServiceImpl implements PedidoService {
             if(brinquedoDTO.quantidade()>0 && brinquedoDTO.quantidade()<=brinquedoBanco.getEstoque()){
                 brinquedoService.validarId(brinquedoDTO.idBrinquedo());
                 BrinquedoPedido brinquedoPedido = new BrinquedoPedido();
+                brinquedoPedido.setPreco(brinquedoBanco.getPreco());
                 brinquedoPedido.setDesconto(brinquedoDTO.desconto());
                 brinquedoPedido.setQuantidade(brinquedoDTO.quantidade());
                 total += brinquedoPedido.getPreco()/(brinquedoDTO.desconto()/100+1)*brinquedoDTO.quantidade();
@@ -129,6 +131,7 @@ public class PedidoServiceImpl implements PedidoService {
             if(petiscoDTO.quantidade()>0 && petiscoDTO.quantidade()<=petiscoBanco.getEstoque()){
                 petiscoService.validarId(petiscoDTO.idPetisco());
                 PetiscoPedido petiscoPedido = new PetiscoPedido();
+                petiscoPedido.setPreco(petiscoBanco.getPreco());
                 petiscoPedido.setDesconto(petiscoDTO.desconto());
                 petiscoPedido.setPetisco(petiscoBanco);
                 petiscoPedido.setQuantidade(petiscoDTO.quantidade());
@@ -146,8 +149,8 @@ public class PedidoServiceImpl implements PedidoService {
             Remedio remedioBanco = remedioRepository.findById(remedioDTO.idRemedio());
             if(remedioDTO.quantidade()>0 && remedioDTO.quantidade()<=remedioBanco.getEstoque()){
                 remedioService.validarId(remedioDTO.idRemedio());
-
                 RemedioPedido remedioPedido = new RemedioPedido();
+                remedioPedido.setPreco(remedioBanco.getPreco());
                 remedioPedido.setDesconto(remedioDTO.desconto());
                 remedioPedido.setRemedio(remedioBanco);
                 remedioPedido.setQuantidade(remedioDTO.quantidade());
