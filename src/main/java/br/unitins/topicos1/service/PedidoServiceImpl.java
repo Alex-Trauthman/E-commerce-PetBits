@@ -89,11 +89,9 @@ public class PedidoServiceImpl implements PedidoService {
         for (RacaoPedidoDTO racaoDTO : dto.racao()) {
             Racao racaoBanco = racaoRepository.findById(racaoDTO.idRacao());
             if(racaoDTO.quantidade()>0 && (racaoDTO.quantidade() <= racaoBanco.getEstoque())){
-                validarPreco(racaoBanco.getPreco(), racaoDTO.preco());
                 racaoService.validarId(racaoDTO.idRacao());
                 RacaoPedido racaoPedido = new RacaoPedido();
                 racaoPedido.setDesconto(racaoDTO.desconto());
-                racaoPedido.setPreco(racaoDTO.preco());
                 racaoPedido.setRacao(racaoBanco);
                 racaoPedido.setQuantidade(racaoDTO.quantidade());
                 total += racaoPedido.getPreco()/(racaoDTO.desconto()/100+1)*racaoDTO.quantidade();
@@ -111,11 +109,9 @@ public class PedidoServiceImpl implements PedidoService {
         for (BrinquedoPedidoDTO brinquedoDTO : dto.brinquedo()) {
             Brinquedo brinquedoBanco = brinquedoRepository.findById(brinquedoDTO.idBrinquedo());
             if(brinquedoDTO.quantidade()>0 && brinquedoDTO.quantidade()<=brinquedoBanco.getEstoque()){
-                validarPreco(brinquedoBanco.getPreco(), brinquedoDTO.preco());
                 brinquedoService.validarId(brinquedoDTO.idBrinquedo());
                 BrinquedoPedido brinquedoPedido = new BrinquedoPedido();
                 brinquedoPedido.setDesconto(brinquedoDTO.desconto());
-                brinquedoPedido.setPreco(brinquedoDTO.preco());
                 brinquedoPedido.setQuantidade(brinquedoDTO.quantidade());
                 total += brinquedoPedido.getPreco()/(brinquedoDTO.desconto()/100+1)*brinquedoDTO.quantidade();
                 brinquedoBanco.setEstoque(brinquedoBanco.getEstoque()-brinquedoDTO.quantidade());
@@ -131,11 +127,9 @@ public class PedidoServiceImpl implements PedidoService {
         for (PetiscoPedidoDTO petiscoDTO : dto.petisco()) {
             Petisco petiscoBanco = petiscoRepository.findById(petiscoDTO.idPetisco());
             if(petiscoDTO.quantidade()>0 && petiscoDTO.quantidade()<=petiscoBanco.getEstoque()){
-                validarPreco(petiscoBanco.getPreco(), petiscoDTO.preco());
                 petiscoService.validarId(petiscoDTO.idPetisco());
                 PetiscoPedido petiscoPedido = new PetiscoPedido();
                 petiscoPedido.setDesconto(petiscoDTO.desconto());
-                petiscoPedido.setPreco(petiscoDTO.preco());
                 petiscoPedido.setPetisco(petiscoBanco);
                 petiscoPedido.setQuantidade(petiscoDTO.quantidade());
                 total += petiscoPedido.getPreco()/(petiscoDTO.desconto()/100+1)*petiscoDTO.quantidade();
@@ -152,10 +146,9 @@ public class PedidoServiceImpl implements PedidoService {
             Remedio remedioBanco = remedioRepository.findById(remedioDTO.idRemedio());
             if(remedioDTO.quantidade()>0 && remedioDTO.quantidade()<=remedioBanco.getEstoque()){
                 remedioService.validarId(remedioDTO.idRemedio());
-                validarPreco(remedioBanco.getPreco(), remedioDTO.preco());
+
                 RemedioPedido remedioPedido = new RemedioPedido();
                 remedioPedido.setDesconto(remedioDTO.desconto());
-                remedioPedido.setPreco(remedioDTO.preco());
                 remedioPedido.setRemedio(remedioBanco);
                 remedioPedido.setQuantidade(remedioDTO.quantidade());
                 total += remedioPedido.getPreco()/(remedioDTO.desconto()/100+1)*remedioDTO.quantidade();
@@ -176,14 +169,6 @@ public class PedidoServiceImpl implements PedidoService {
         return PedidoResponseDTO.valueOf(pedido);
     }
     
-    public ValidationError validarPreco(Double precoReal, Double precoPedido) {
-        if (precoReal != precoPedido){
-            ValidationError error = new ValidationError("409", "Preço diferente do cadastrado");
-            error.addFieldError("username", "Username já cadastrado");
-            return error;
-        }
-        return null;
-    }
 
     public ValidationError validarQuantidade(Integer quantidadeReal, Integer quantidadePedido) {
         if (quantidadeReal < quantidadePedido){
