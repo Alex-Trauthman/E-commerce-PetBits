@@ -135,6 +135,8 @@ public class ClienteServiceImpl implements ClienteService {
             UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
             return Response.ok(user).build();
         }
+        Cliente cliente = clienteRepository.findByUsername(findLoggedUser().getUsername());
+        cliente.setUsuario(usuario);
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     public Response updateUsername(String username){
@@ -142,6 +144,8 @@ public class ClienteServiceImpl implements ClienteService {
         Usuario usuario = findLoggedUser();
         usuario.setUsername(username);
         UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
+        Cliente cliente = clienteRepository.findByUsername(findLoggedUser().getUsername());
+        cliente.setUsuario(usuario);
         return Response.ok(user).build();
     }
     public Response updateEmail(String email){

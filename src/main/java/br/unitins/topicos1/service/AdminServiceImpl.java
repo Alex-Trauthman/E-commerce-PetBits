@@ -127,6 +127,8 @@ public class AdminServiceImpl implements AdminService {
             UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
             return Response.ok(user).build();
         }
+        Admin admin = adminRepository.findByUsername(jsonWebToken.getName());
+        admin.setUsuario(usuario);
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
@@ -135,6 +137,8 @@ public class AdminServiceImpl implements AdminService {
         Usuario usuario = findLoggedUser();
         usuario.setUsername(username);
         UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
+        Admin admin = adminRepository.findByUsername(jsonWebToken.getName());
+        admin.setUsuario(usuario);
         return Response.ok(user).build();
     }
 
