@@ -121,14 +121,16 @@ public class AdminServiceImpl implements AdminService {
     
     public Response updateSenha(String senhaAtual, String novaSenha){
         Usuario usuario = usuarioRepository.findByUsername(jsonWebToken.getName());
+        Admin admin = adminRepository.findByUsername(jsonWebToken.getName());
         if(hashService.getHashSenha(senhaAtual).equals(usuario.getSenha())){
             usuario.setSenha(hashService.getHashSenha(novaSenha));
             usuarioRepository.persist(usuario);
             UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
+            admin.getUsuario().setSenha(hashService.getHashSenha(novaSenha));
             return Response.ok(user).build();
         }
-        Admin admin = adminRepository.findByUsername(jsonWebToken.getName());
-        admin.setUsuario(usuario);
+        
+        
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
@@ -138,7 +140,7 @@ public class AdminServiceImpl implements AdminService {
         usuario.setUsername(username);
         UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
         Admin admin = adminRepository.findByUsername(jsonWebToken.getName());
-        admin.setUsuario(usuario);
+        admin.getUsuario().setUsername(username);
         return Response.ok(user).build();
     }
 

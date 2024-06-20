@@ -129,14 +129,14 @@ public class ClienteServiceImpl implements ClienteService {
 
     public Response updateSenha(String senhaAtual, String novaSenha){
         Usuario usuario = usuarioRepository.findByUsername(jsonWebToken.getName());
+        Cliente cliente = clienteRepository.findByUsername(findLoggedUser().getUsername());
         if(hashService.getHashSenha(senhaAtual).equals(usuario.getSenha())){
             usuario.setSenha(hashService.getHashSenha(novaSenha));
             usuarioRepository.persist(usuario);
             UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
+            cliente.getUsuario().setSenha(usuario.getSenha());
             return Response.ok(user).build();
         }
-        Cliente cliente = clienteRepository.findByUsername(findLoggedUser().getUsername());
-        cliente.setUsuario(usuario);
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     public Response updateUsername(String username){
@@ -145,7 +145,7 @@ public class ClienteServiceImpl implements ClienteService {
         usuario.setUsername(username);
         UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
         Cliente cliente = clienteRepository.findByUsername(findLoggedUser().getUsername());
-        cliente.setUsuario(usuario);
+        cliente.getUsuario().setUsername(username);
         return Response.ok(user).build();
     }
     public Response updateEmail(String email){
