@@ -119,14 +119,13 @@ public class AdminServiceImpl implements AdminService {
         return usuario;
     }
     
+    @Override
+    @Transactional
     public Response updateSenha(String senhaAtual, String novaSenha){
         Usuario usuario = usuarioRepository.findByUsername(jsonWebToken.getName());
-        Admin admin = adminRepository.findByUsername(jsonWebToken.getName());
         if(hashService.getHashSenha(senhaAtual).equals(usuario.getSenha())){
             usuario.setSenha(hashService.getHashSenha(novaSenha));
-            usuarioRepository.persist(usuario);
             UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
-            admin.getUsuario().setSenha(hashService.getHashSenha(novaSenha));
             return Response.ok(user).build();
         }
         
@@ -134,17 +133,18 @@ public class AdminServiceImpl implements AdminService {
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
+    @Override
+    @Transactional
     public Response updateUsername(String username){
         repeatedUsername(username);
         Usuario usuario = findLoggedUser();
         usuario.setUsername(username);
         UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
-        Admin admin = adminRepository.findByUsername(jsonWebToken.getName());
-        admin.getUsuario().setUsername(username);
         return Response.ok(user).build();
     }
 
     @Override
+    @Transactional
     public Response updateEmail(String email){
         Admin admin = adminRepository.findByUsername(findLoggedUser().getUsername());
         admin.setEmail(email);
@@ -153,6 +153,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public Response updateListaTelefone(List<TelefoneDTO> telefones){
         Admin admin = adminRepository.findByUsername(findLoggedUser().getUsername());
         admin.getListaTelefone().clear();

@@ -9,8 +9,5 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class RacaoPedidoRepository implements PanacheRepository<RacaoPedido> {
 
-    public List<RacaoPedido> findByCliente(Long idCliente) {
-        return find("UPPER(cliente.id) = ?1", idCliente).list();
-    }
     
 }

@@ -42,13 +42,20 @@ public class PedidoResource {
 
     @GET
     @Path("/search/cliente/{id}")
+    @RolesAllowed("Admin")
     public Response findByCliente(@PathParam("id") Long id) {
         LOGGER.info("Finding pedido by cliente: " + id);
         return Response.ok(pedidoService.findByCliente(id)).build();
     }
+
+    @GET
+    @Path("/search/my")
+    @RolesAllowed("Cliente")
+    public Response findMyPedidos() {
+        LOGGER.info("Finding my pedidos");
+        return Response.ok(pedidoService.findMyPedidos()).build();
+    }
     
-
-
     @POST
     @RolesAllowed("Admin")
     public Response create(PedidoDTO dto) {

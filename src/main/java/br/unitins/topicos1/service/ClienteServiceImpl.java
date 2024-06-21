@@ -127,27 +127,31 @@ public class ClienteServiceImpl implements ClienteService {
         return usuarioRepository.findByUsername(jsonWebToken.getName());
     }
 
+    @Override
+    @Transactional
     public Response updateSenha(String senhaAtual, String novaSenha){
         Usuario usuario = usuarioRepository.findByUsername(jsonWebToken.getName());
-        Cliente cliente = clienteRepository.findByUsername(findLoggedUser().getUsername());
         if(hashService.getHashSenha(senhaAtual).equals(usuario.getSenha())){
             usuario.setSenha(hashService.getHashSenha(novaSenha));
             usuarioRepository.persist(usuario);
             UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
-            cliente.getUsuario().setSenha(usuario.getSenha());
             return Response.ok(user).build();
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
+
+    @Override
+    @Transactional
     public Response updateUsername(String username){
         repeatedUsername(username);
         Usuario usuario = findLoggedUser();
         usuario.setUsername(username);
         UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
-        Cliente cliente = clienteRepository.findByUsername(findLoggedUser().getUsername());
-        cliente.getUsuario().setUsername(username);
         return Response.ok(user).build();
     }
+
+    @Override
+    @Transactional
     public Response updateEmail(String email){
         Cliente cliente = clienteRepository.findByUsername(findLoggedUser().getUsername());
         cliente.setEmail(email);
@@ -155,6 +159,8 @@ public class ClienteServiceImpl implements ClienteService {
         return Response.ok(user).build();
     }
 
+    @Override
+    @Transactional
     public Response updateEndereco(String rua, String numero, String cidade, String estado, String cep){
         Cliente cliente = clienteRepository.findByUsername(findLoggedUser().getUsername());
         Endereco endereco = new Endereco();
@@ -167,6 +173,9 @@ public class ClienteServiceImpl implements ClienteService {
         ClienteResponseDTO user = ClienteResponseDTO.valueOf(cliente);
         return Response.ok(user).build();
     }
+
+    @Override
+    @Transactional
     public Response updateListaTelefone(List<TelefoneDTO> telefones){
         Cliente cliente = clienteRepository.findByUsername(findLoggedUser().getUsername());
         cliente.setListaTelefone(new ArrayList<Telefone>());

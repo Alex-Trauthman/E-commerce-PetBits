@@ -24,7 +24,7 @@ public record UsuarioResponseDTO(
     public static UsuarioResponseDTO valueOf(Usuario usuario) {
         return new UsuarioResponseDTO(
                 usuario.getUsername(),
-                null
+                usuario.getUsername()
             );
     }
     

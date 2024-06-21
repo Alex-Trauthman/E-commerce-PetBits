@@ -182,6 +182,10 @@ public class PedidoServiceImpl implements PedidoService {
         return null;
     }
 
+    @Override
+    public List<PedidoResponseDTO> findMyPedidos(){
+        return findByCliente(clienteRepository.findByUsername(jsonWebToken.getName()).getId());
+    }
 
     @Override
     public PedidoResponseDTO findById(Long id) {
@@ -231,5 +235,5 @@ public class PedidoServiceImpl implements PedidoService {
         pedidoPagar.setStatus("Pago, Pix");
         
     }
-
+    
 }
