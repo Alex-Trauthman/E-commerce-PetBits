@@ -6,6 +6,7 @@ import org.jboss.logging.Logger;
 
 import br.unitins.topicos1.dto.ClienteDTO;
 import br.unitins.topicos1.dto.TelefoneDTO;
+import br.unitins.topicos1.dto.TrocaSenhaDTO;
 import br.unitins.topicos1.service.ClienteService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -78,10 +79,10 @@ public class ClienteResource {
     
     @PATCH
     @RolesAllowed("Cliente")
-    @Path("/updateSenha/{senhaAntiga, novaSenha}")
-    public Response updateSenha(@PathParam("senhaAntiga") String senhaAntiga, @PathParam("novaSenha") String novaSenha) {
+    @Path("/updateSenha")
+    public Response updateSenha(TrocaSenhaDTO trocaSenhaDTO) {
         LOGGER.info("Updating senha");
-        return clienteService.updateSenha(senhaAntiga, novaSenha);
+        return clienteService.updateSenha(trocaSenhaDTO);
     }
     
     @PATCH

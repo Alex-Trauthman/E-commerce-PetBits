@@ -13,7 +13,6 @@ public record AdminResponseDTO(
     String username, 
     Double salario,
     String cargo,
-    String senha,
     List<TelefoneResponseDTO> telefones
 ) {
     public static AdminResponseDTO valueOf(Admin admin) {
@@ -28,7 +27,6 @@ public record AdminResponseDTO(
             admin.getUsuario().getUsername(),
             admin.getSalario(),
             admin.getCargo(),
-            admin.getUsuario().getSenha(),
             lista);
     }
     

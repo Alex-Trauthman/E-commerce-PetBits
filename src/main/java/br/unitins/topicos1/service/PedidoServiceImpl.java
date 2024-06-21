@@ -11,6 +11,7 @@ import br.unitins.topicos1.dto.CartaoCreditoDTO;
 import br.unitins.topicos1.dto.PedidoDTO;
 import br.unitins.topicos1.dto.PedidoResponseDTO;
 import br.unitins.topicos1.dto.PetiscoPedidoDTO;
+import br.unitins.topicos1.dto.PixDTO;
 import br.unitins.topicos1.dto.RacaoPedidoDTO;
 import br.unitins.topicos1.dto.RemedioPedidoDTO;
 import br.unitins.topicos1.model.Brinquedo;
@@ -209,6 +210,7 @@ public class PedidoServiceImpl implements PedidoService {
         .map(e -> PedidoResponseDTO.valueOf(e)).toList();
     }
     @Override
+    @Transactional
     public void PagarPedidoCredito(Long id, CartaoCreditoDTO cartao) {
         Pedido pedidoPagar = pedidoRepository.findById(id);
         
@@ -225,11 +227,17 @@ public class PedidoServiceImpl implements PedidoService {
         pedidoPagar.setStatus("Pago, Crédito");
     }
     @Override
-    public void PagarPedidoPix(Long id, String chavePix) {
-        Pedido pedidoPagar = pedidoRepository.findById(id);
+    @Transactional
+    public void PagarPedidoPix(PixDTO pix) {
+        Pedido pedidoPagar = pedidoRepository.findById(pix.idPedido());
         if(pedidoPagar==null){
             ValidationError error = new ValidationError("404", "Pedido não encontrado");
             error.addFieldError("id", "Pedido não encontrado");
+            throw new RuntimeException(error.toString());
+        }
+        if(pedidoPagar.getTotal()>pix.valor()){
+            ValidationError error = new ValidationError("409", "Valor insuficiente");
+            error.addFieldError("valor", "Valor "+(pedidoPagar.getTotal()- pix.valor())+" menor que o total do pedido");
             throw new RuntimeException(error.toString());
         }
         pedidoPagar.setStatus("Pago, Pix");

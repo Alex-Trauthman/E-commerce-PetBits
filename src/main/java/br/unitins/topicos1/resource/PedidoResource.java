@@ -4,6 +4,7 @@ import org.jboss.logging.Logger;
 
 import br.unitins.topicos1.dto.CartaoCreditoDTO;
 import br.unitins.topicos1.dto.PedidoDTO;
+import br.unitins.topicos1.dto.PixDTO;
 import br.unitins.topicos1.service.PedidoService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -63,18 +64,20 @@ public class PedidoResource {
         return Response.status(Status.CREATED).entity(pedidoService.create(dto)).build();
     }
     @POST
-    @Path("/pagar/cartao")
+    @Path("/pagar/cartao/{id}")
     @RolesAllowed("Cliente")
-    public Response pagarCartao(Long id, CartaoCreditoDTO dto) {
+    public Response pagarCartao(@PathParam("id") Long id, CartaoCreditoDTO dto) {
         LOGGER.info("Paying pedido with credit card");
+        pedidoService.PagarPedidoCredito(id, dto);
         return Response.noContent().build();
     }
     @POST
     @Path("/pagar/pix")
     @RolesAllowed("Cliente")
-    public Response pagarPix(Long id, String chavePix) {
+    public Response pagarPix(PixDTO dto) {
         LOGGER.info("Paying pedido with pix");
-        return Response.noContent().build();
+        pedidoService.PagarPedidoPix(dto);
+        return Response.status(Status.CREATED).build();
     }
 
 

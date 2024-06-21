@@ -8,6 +8,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import br.unitins.topicos1.dto.AdminDTO;
 import br.unitins.topicos1.dto.AdminResponseDTO;
 import br.unitins.topicos1.dto.TelefoneDTO;
+import br.unitins.topicos1.dto.TrocaSenhaDTO;
 import br.unitins.topicos1.dto.UsuarioResponseDTO;
 import br.unitins.topicos1.model.Admin;
 import br.unitins.topicos1.model.Telefone;
@@ -15,10 +16,12 @@ import br.unitins.topicos1.model.Usuario;
 import br.unitins.topicos1.repository.AdminRepository;
 import br.unitins.topicos1.repository.UsuarioRepository;
 import br.unitins.topicos1.validation.ValidationError;
+import br.unitins.topicos1.validation.ValidationException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+
 import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
@@ -39,12 +42,13 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public AdminResponseDTO create(@Valid AdminDTO dto) {
-
+        
+        repeatedUsername(dto.username());
+            
         Usuario usuario = new Usuario();
         usuario.setUsername(dto.username());
         // gerando o hash da senha
         usuario.setSenha(hashService.getHashSenha(dto.senha()));
-        repeatedUsername(null);
         // salvando o usuario
         usuarioRepository.persist(usuario);
       
@@ -68,13 +72,10 @@ public class AdminServiceImpl implements AdminService {
         return AdminResponseDTO.valueOf(admin);
     }
 
-    public ValidationError repeatedUsername(String username){
+    public void repeatedUsername(String username){
         if(usuarioRepository.findByUsername(username) != null){
-            ValidationError error = new ValidationError("409", "Username já cadastrado");
-            error.addFieldError("username", "Username já cadastrado");
-            return error;
+        throw new ValidationException("username","Username já cadastrado");
         }
-        return null;
     }
 
 
@@ -106,6 +107,9 @@ public class AdminServiceImpl implements AdminService {
     
     public UsuarioResponseDTO login(String username, String senha) {
         Admin admin = adminRepository.findByUsernameAndSenha(username, senha);
+        if (admin == null) {
+            throw new ValidationException("username", "Usuário ou senha inválidos");
+        }
         return UsuarioResponseDTO.valueOfAdmin(admin);
     }
 
@@ -121,16 +125,25 @@ public class AdminServiceImpl implements AdminService {
     
     @Override
     @Transactional
-    public Response updateSenha(String senhaAtual, String novaSenha){
+    public Response updateSenha(TrocaSenhaDTO senhaDTO){
         Usuario usuario = usuarioRepository.findByUsername(jsonWebToken.getName());
+        String novaSenha = senhaDTO.novaSenha();
+        String confirmacao = senhaDTO.confirmacao();
+        String senhaAtual = senhaDTO.senhaAtual();
+        if(!(novaSenha.equals(confirmacao))){
+            ValidationError error = new ValidationError("409", "Senhas não conferem");
+            error.addFieldError("confirmacao", "Senhas divergentes");
+            throw new ValidationException("confirmacao","Senhas divergentes");
+        }
         if(hashService.getHashSenha(senhaAtual).equals(usuario.getSenha())){
             usuario.setSenha(hashService.getHashSenha(novaSenha));
             UsuarioResponseDTO user = UsuarioResponseDTO.valueOf(usuario);
             return Response.ok(user).build();
+        }else{
+            ValidationError error = new ValidationError("409", "Senha atual incorreta");
+            error.addFieldError("senhaAtual", "Senha atual incorreta");
+            throw new ValidationException("senhaAtual","Senha atual incorreta");
         }
-        
-        
-        return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
     @Override

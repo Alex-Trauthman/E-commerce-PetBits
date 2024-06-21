@@ -6,6 +6,7 @@ import org.jboss.logging.Logger;
 
 import br.unitins.topicos1.dto.AdminDTO;
 import br.unitins.topicos1.dto.TelefoneDTO;
+import br.unitins.topicos1.dto.TrocaSenhaDTO;
 import br.unitins.topicos1.service.AdminService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -80,10 +81,10 @@ public class AdminResource {
 
     @PATCH
     @RolesAllowed("Admin")
-    @Path("/updateSenha/{senhaAntiga}/{novaSenha}")
-    public Response updateSenha(@PathParam("senhaAntiga") String senhaAntiga, @PathParam("novaSenha") String novaSenha) {
+    @Path("/updateSenha")
+    public Response updateSenha(TrocaSenhaDTO trocaSenha) {
         LOGGER.info("Updating admin password");
-        return adminService.updateSenha(senhaAntiga, novaSenha);
+        return adminService.updateSenha(trocaSenha);
     }
 
     @PATCH

@@ -5,6 +5,7 @@ import java.util.List;
 import br.unitins.topicos1.dto.AdminDTO;
 import br.unitins.topicos1.dto.AdminResponseDTO;
 import br.unitins.topicos1.dto.TelefoneDTO;
+import br.unitins.topicos1.dto.TrocaSenhaDTO;
 import br.unitins.topicos1.dto.UsuarioResponseDTO;
 import br.unitins.topicos1.model.Usuario;
 import jakarta.validation.Valid;
@@ -28,7 +29,7 @@ public interface AdminService {
 
     public Response updateUsername(String username);
 
-    public Response updateSenha(String senhaAntiga, String novaSenha);
+    public Response updateSenha(TrocaSenhaDTO trocaSenhaDTO);
     
     public Response updateEmail(String email);
     

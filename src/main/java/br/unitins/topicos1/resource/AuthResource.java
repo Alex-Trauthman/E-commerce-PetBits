@@ -7,6 +7,7 @@ import br.unitins.topicos1.service.ClienteService;
 import br.unitins.topicos1.service.HashService;
 import br.unitins.topicos1.service.JwtService;
 import jakarta.inject.Inject;
+import jakarta.validation.ValidationException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -40,10 +41,12 @@ public class AuthResource {
         // perfil 2 para admin e 1 para cliente
         if (dto.perfil() == 1) {
             usuario = clienteService.login(dto.username(), hash);
+            
         } else if (dto.perfil() == 2) {
             usuario = adminService.login(dto.username(), hash);
+            
         } else {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new ValidationException("Perfil inválido");
         }
         return Response.ok(usuario)
             .header("Authorization", jwtService.generateJwt(usuario))
