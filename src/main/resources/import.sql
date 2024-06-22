@@ -32,3 +32,4 @@ INSERT INTO usuario(username,senha) values ('cleiton', '00QUydFSCxRZUL4yGYTi181z
 INSERT INTO cliente(id_usuario,email,nome,cidade,cpf,cep,rua,estado) values(2,'cleito@gmail.com','cleiton da silva','Palmas','289123','2131','203 sul','Tocantins');
 
 INSERT INTO admin(id_usuario,salario,nome,email,cargo) values(1,12300.00,'Jonata Santos de Oliveira', 'jonata@gmail.com','CEO');
+INSERT INTO pedido(id_cliente,dataexpiracao,total,status) values(1,'2021-06-01',123.00,'Pago pelo ADM do inter');

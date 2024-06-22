@@ -15,6 +15,7 @@ public interface ClienteService {
 
     public ClienteResponseDTO create(@Valid ClienteDTO dto);
 
+    public ClienteResponseDTO cadastrar(@Valid ClienteDTO dto);
 
     public void delete(Long id);
 
@@ -30,7 +31,7 @@ public interface ClienteService {
 
     public Response updateUsername(String username);
 
-    public Response updateSenha(TrocaSenhaDTO dto);
+    public Response updateSenha(@Valid TrocaSenhaDTO dto);
 
     public Response updateEmail(String email);
 
@@ -38,4 +39,5 @@ public interface ClienteService {
 
     public Response updateListaTelefone(List<TelefoneDTO> telefones);
 
+    public Response updateCliente(Long id, ClienteDTO clienteDTO);
 }

@@ -39,6 +39,12 @@ public class ClienteServiceImpl implements ClienteService {
     @Inject
     public HashService hashService;
 
+    @Override
+    @Transactional
+    public ClienteResponseDTO cadastrar(@Valid ClienteDTO clienteDTO){
+        return create(clienteDTO);
+    }
+
 
     @Override
     @Transactional
@@ -55,7 +61,7 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente cliente = new Cliente();
         cliente.setNome(dto.nome());
         cliente.setEmail(dto.email());
-        cliente.setCpf(dto.email());
+        cliente.setCpf(dto.cpf());
         cliente.setListaTelefone(new ArrayList<Telefone>());
         cliente.setUsuario(usuario);
 
@@ -89,6 +95,7 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public void delete(Long id) {
+        usuarioRepository.deleteById(clienteRepository.findById(id).getUsuario().getId());
         clienteRepository.deleteById(id);
     }
 
@@ -130,7 +137,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     @Transactional
-    public Response updateSenha(TrocaSenhaDTO senhaDTO){
+    public Response updateSenha(@Valid TrocaSenhaDTO senhaDTO){
         Usuario usuario = usuarioRepository.findByUsername(jsonWebToken.getName());
         String novaSenha = senhaDTO.novaSenha();
         String confirmacao = senhaDTO.confirmacao();
@@ -199,5 +206,30 @@ public class ClienteServiceImpl implements ClienteService {
         ClienteResponseDTO user = ClienteResponseDTO.valueOf(cliente);
         return Response.ok(user).build();
     }
-
+    @Override
+    @Transactional
+    public Response updateCliente(Long id, ClienteDTO dto){
+        Cliente cliente = clienteRepository.findById(id);
+        cliente.setNome(dto.nome());
+        cliente.setEmail(dto.email());
+        cliente.setCpf(dto.cpf());
+        cliente.getUsuario().setUsername(dto.username());
+        cliente.getUsuario().setSenha(hashService.getHashSenha(dto.senha()));
+        cliente.getListaTelefone().clear();
+        for (TelefoneDTO tel : dto.telefones()) {
+            Telefone t = new Telefone();
+            t.setCodigoArea(tel.codigoArea());
+            t.setNumero(tel.numero());
+            cliente.getListaTelefone().add(t);
+        }
+        Endereco endereco = new Endereco();
+        endereco.setRua(dto.endereco().getRua());
+        endereco.setNumero(dto.endereco().getNumero());
+        endereco.setCidade(dto.endereco().getCidade());
+        endereco.setEstado(dto.endereco().getEstado());
+        endereco.setCep(dto.endereco().getCep());
+        cliente.setEndereco(endereco);
+        ClienteResponseDTO user = ClienteResponseDTO.valueOf(cliente);
+        return Response.ok(user).build();
+    }
 }

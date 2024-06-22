@@ -1,6 +1,7 @@
 package br.unitins.topicos1.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record CartaoCreditoDTO(
     @NotBlank(message = "O número do cartão é obrigatório")
@@ -10,6 +11,7 @@ public record CartaoCreditoDTO(
     
     @NotBlank(message = "O CVV do cartão é obrigatório")
     String cvv,
+    @NotNull(message = "O limite do cartão é obrigatório")
     Double limite
 ) {
 	

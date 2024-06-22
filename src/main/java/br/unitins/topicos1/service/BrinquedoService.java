@@ -9,7 +9,7 @@ import jakarta.validation.Valid;
 public interface BrinquedoService {
 
     public BrinquedoResponseDTO create(@Valid BrinquedoDTO dto);
-    public void update(Long id, BrinquedoDTO dto);
+    public void update(Long id, @Valid BrinquedoDTO dto);
     public void delete(Long id);
     public BrinquedoResponseDTO findById(Long id);
     public List<BrinquedoResponseDTO> findAll();

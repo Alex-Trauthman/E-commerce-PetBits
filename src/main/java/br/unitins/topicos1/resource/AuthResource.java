@@ -49,7 +49,7 @@ public class AuthResource {
             throw new ValidationException("Perfil inválido");
         }
         return Response.ok(usuario)
-            .header("Authorization", jwtService.generateJwt(usuario))
+            .header("Authorization", jwtService.generateJwt(usuario, dto.perfil()))
             .build();
     }
 

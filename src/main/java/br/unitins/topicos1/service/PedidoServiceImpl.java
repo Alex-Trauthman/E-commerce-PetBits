@@ -1,5 +1,6 @@
 package br.unitins.topicos1.service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ import br.unitins.topicos1.repository.RacaoPedidoRepository;
 import br.unitins.topicos1.repository.RacaoRepository;
 import br.unitins.topicos1.repository.RemedioPedidoRepository;
 import br.unitins.topicos1.repository.RemedioRepository;
-import br.unitins.topicos1.validation.ValidationError;
+import br.unitins.topicos1.validation.ValidationException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -82,27 +83,25 @@ public class PedidoServiceImpl implements PedidoService {
 
         Pedido pedido = new Pedido();
         double total =0;
-        pedido.setData(LocalDateTime.now());
+        pedido.setDataExpiracao(LocalDateTime.now().plus(Duration.ofMinutes(20)));
         
         pedido.setCliente(clienteRepository.findByUsername(jsonWebToken.getName()));
         List<RacaoPedido> racao = new ArrayList<RacaoPedido>();
 
         for (RacaoPedidoDTO racaoDTO : dto.racao()) {
             Racao racaoBanco = racaoRepository.findById(racaoDTO.idRacao());
-            if(racaoDTO.quantidade()>0 && (racaoDTO.quantidade() <= racaoBanco.getEstoque())){
-                racaoService.validarId(racaoDTO.idRacao());
-                RacaoPedido racaoPedido = new RacaoPedido();
-                racaoPedido.setPreco(racaoBanco.getPreco());
-                racaoPedido.setDesconto(racaoDTO.desconto());
-                racaoPedido.setRacao(racaoBanco);
-                racaoPedido.setQuantidade(racaoDTO.quantidade());
-                total += racaoPedido.getPreco()/(racaoDTO.desconto()/100+1)*racaoDTO.quantidade();
-                racaoBanco.setEstoque(racaoBanco.getEstoque()-racaoDTO.quantidade());
-                racaoPedidoRepository.persist(racaoPedido);
-                racao.add(racaoPedido);
-            }else{
-                validarQuantidade(racaoBanco.getEstoque(), racaoDTO.quantidade());
-            }
+            validarQuantidade(racaoBanco.getEstoque(), racaoDTO.quantidade());
+            racaoService.validarId(racaoDTO.idRacao());
+            RacaoPedido racaoPedido = new RacaoPedido();
+            racaoPedido.setPreco(racaoBanco.getPreco());
+            racaoPedido.setDesconto(racaoDTO.desconto());
+            racaoPedido.setRacao(racaoBanco);
+            racaoPedido.setQuantidade(racaoDTO.quantidade());
+            total += racaoPedido.getPreco()/(racaoDTO.desconto()/100+1)*racaoDTO.quantidade();
+            racaoBanco.setEstoque(racaoBanco.getEstoque()-racaoDTO.quantidade());
+            racaoPedidoRepository.persist(racaoPedido);
+            racao.add(racaoPedido);
+            
         }
         
 
@@ -110,59 +109,52 @@ public class PedidoServiceImpl implements PedidoService {
 
         for (BrinquedoPedidoDTO brinquedoDTO : dto.brinquedo()) {
             Brinquedo brinquedoBanco = brinquedoRepository.findById(brinquedoDTO.idBrinquedo());
-            if(brinquedoDTO.quantidade()>0 && brinquedoDTO.quantidade()<=brinquedoBanco.getEstoque()){
-                brinquedoService.validarId(brinquedoDTO.idBrinquedo());
-                BrinquedoPedido brinquedoPedido = new BrinquedoPedido();
-                brinquedoPedido.setPreco(brinquedoBanco.getPreco());
-                brinquedoPedido.setDesconto(brinquedoDTO.desconto());
-                brinquedoPedido.setQuantidade(brinquedoDTO.quantidade());
-                total += brinquedoPedido.getPreco()/(brinquedoDTO.desconto()/100+1)*brinquedoDTO.quantidade();
-                brinquedoBanco.setEstoque(brinquedoBanco.getEstoque()-brinquedoDTO.quantidade());
-                brinquedoPedido.setBrinquedo(brinquedoBanco);
-                brinquedoPedidoRepository.persist(brinquedoPedido);
-                brinquedo.add(brinquedoPedido);
-            }else{
-                validarQuantidade(brinquedoBanco.getEstoque(), brinquedoDTO.quantidade());
-            }
+            brinquedoService.validarId(brinquedoDTO.idBrinquedo());
+            validarQuantidade(brinquedoBanco.getEstoque(), brinquedoDTO.quantidade());
+            BrinquedoPedido brinquedoPedido = new BrinquedoPedido();
+            brinquedoPedido.setPreco(brinquedoBanco.getPreco());
+            brinquedoPedido.setDesconto(brinquedoDTO.desconto());
+            brinquedoPedido.setQuantidade(brinquedoDTO.quantidade());
+            total += brinquedoPedido.getPreco()/(brinquedoDTO.desconto()/100+1)*brinquedoDTO.quantidade();
+            brinquedoBanco.setEstoque(brinquedoBanco.getEstoque()-brinquedoDTO.quantidade());
+            brinquedoPedido.setBrinquedo(brinquedoBanco);
+            brinquedoPedidoRepository.persist(brinquedoPedido);
+            brinquedo.add(brinquedoPedido);
+            
         }
         List<PetiscoPedido> petisco = new ArrayList<PetiscoPedido>();
 
         for (PetiscoPedidoDTO petiscoDTO : dto.petisco()) {
             Petisco petiscoBanco = petiscoRepository.findById(petiscoDTO.idPetisco());
-            if(petiscoDTO.quantidade()>0 && petiscoDTO.quantidade()<=petiscoBanco.getEstoque()){
-                petiscoService.validarId(petiscoDTO.idPetisco());
-                PetiscoPedido petiscoPedido = new PetiscoPedido();
-                petiscoPedido.setPreco(petiscoBanco.getPreco());
-                petiscoPedido.setDesconto(petiscoDTO.desconto());
-                petiscoPedido.setPetisco(petiscoBanco);
-                petiscoPedido.setQuantidade(petiscoDTO.quantidade());
-                total += petiscoPedido.getPreco()/(petiscoDTO.desconto()/100+1)*petiscoDTO.quantidade();
-                petiscoBanco.setEstoque(petiscoBanco.getEstoque()-petiscoDTO.quantidade());
-                petiscoPedidoRepository.persist(petiscoPedido);
-                petisco.add(petiscoPedido);
-            }else{
-                validarQuantidade(petiscoBanco.getEstoque(), petiscoDTO.quantidade());
-            }
+            petiscoService.validarId(petiscoDTO.idPetisco());
+            validarQuantidade(petiscoBanco.getEstoque(),petiscoDTO.quantidade());
+            PetiscoPedido petiscoPedido = new PetiscoPedido();
+            petiscoPedido.setPreco(petiscoBanco.getPreco());
+            petiscoPedido.setDesconto(petiscoDTO.desconto());
+            petiscoPedido.setPetisco(petiscoBanco);
+            petiscoPedido.setQuantidade(petiscoDTO.quantidade());
+            total += petiscoPedido.getPreco()/(petiscoDTO.desconto()/100+1)*petiscoDTO.quantidade();
+            petiscoBanco.setEstoque(petiscoBanco.getEstoque()-petiscoDTO.quantidade());
+            petiscoPedidoRepository.persist(petiscoPedido);
+            petisco.add(petiscoPedido);
         }
         List<RemedioPedido> remedio = new ArrayList<RemedioPedido>();
 
         for (RemedioPedidoDTO remedioDTO : dto.remedio()) {
             Remedio remedioBanco = remedioRepository.findById(remedioDTO.idRemedio());
-            if(remedioDTO.quantidade()>0 && remedioDTO.quantidade()<=remedioBanco.getEstoque()){
-                remedioService.validarId(remedioDTO.idRemedio());
-                RemedioPedido remedioPedido = new RemedioPedido();
-                remedioPedido.setPreco(remedioBanco.getPreco());
-                remedioPedido.setDesconto(remedioDTO.desconto());
-                remedioPedido.setRemedio(remedioBanco);
-                remedioPedido.setQuantidade(remedioDTO.quantidade());
-                total += remedioPedido.getPreco()/(remedioDTO.desconto()/100+1)*remedioDTO.quantidade();
-                remedioBanco.setEstoque(remedioBanco.getEstoque()-remedioDTO.quantidade());
-                remedioPedidoRepository.persist(remedioPedido);
-                remedio.add(remedioPedido);
-            }else{
-                validarQuantidade(remedioBanco.getEstoque(), remedioDTO.quantidade());
-            }
+            remedioService.validarId(remedioDTO.idRemedio());
+            validarQuantidade(remedioBanco.getEstoque(), remedioDTO.quantidade());
+            RemedioPedido remedioPedido = new RemedioPedido();
+            remedioPedido.setPreco(remedioBanco.getPreco());
+            remedioPedido.setDesconto(remedioDTO.desconto());
+            remedioPedido.setRemedio(remedioBanco);
+            remedioPedido.setQuantidade(remedioDTO.quantidade());
+            total += remedioPedido.getPreco()/(remedioDTO.desconto()/100+1)*remedioDTO.quantidade();
+            remedioBanco.setEstoque(remedioBanco.getEstoque()-remedioDTO.quantidade());
+            remedioPedidoRepository.persist(remedioPedido);
+            remedio.add(remedioPedido);
         }
+        total = Math.round(total*100.0)/100.0;
         pedido.setTotal(total);
         pedido.setRemedio(remedio);
         pedido.setPetisco(petisco);
@@ -174,13 +166,10 @@ public class PedidoServiceImpl implements PedidoService {
     }
     
 
-    public ValidationError validarQuantidade(Integer quantidadeReal, Integer quantidadePedido) {
-        if (quantidadeReal < quantidadePedido){
-            ValidationError error = new ValidationError("409", "Quantidade maior que o estoque");
-            error.addFieldError("quantidade", "Quantidade maior que o estoque");
-            return error;
+    public void validarQuantidade(Integer quantidadeReal, Integer quantidadePedido) {
+        if (quantidadeReal < quantidadePedido||quantidadePedido<0){
+            throw new ValidationException("Quantidade", "Quantidade maior que o estoque");
         }
-        return null;
     }
 
     @Override
@@ -191,9 +180,26 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public PedidoResponseDTO findById(Long id) {
         Pedido pedido = pedidoRepository.findById(id);
-        if (pedido != null)
-            return PedidoResponseDTO.valueOf(pedido);
-        return null;
+        if (pedido == null){
+            return null;
+        }
+        return PedidoResponseDTO.valueOf(pedidoRepository.findById(id));
+    }
+
+    public void processarPedido(Long pedidoId, double valor) {
+        Pedido pedido = pedidoRepository.findById(pedidoId);
+        if (pedido == null) {
+            throw new ValidationException("Pedido", "Pedido não encontrado.");
+        }
+    
+        // Verifica se o pedido expirou
+        if (pedido.getDataExpiracao().isBefore(LocalDateTime.now())) {
+            throw new ValidationException("Pedido", "Pedido expirado.");
+        }
+        if(valor<pedido.getTotal()){
+            throw new ValidationException("Valor", "Valor insuficiente.");
+        }
+
     }
 
     @Override
@@ -211,37 +217,45 @@ public class PedidoServiceImpl implements PedidoService {
     }
     @Override
     @Transactional
-    public void PagarPedidoCredito(Long id, CartaoCreditoDTO cartao) {
+    public void PagarPedidoCredito(Long id, @Valid CartaoCreditoDTO cartao) {
         Pedido pedidoPagar = pedidoRepository.findById(id);
         
-        if(pedidoPagar==null){
-            ValidationError error = new ValidationError("404", "Pedido não encontrado");
-            error.addFieldError("id", "Pedido não encontrado");
-            throw new RuntimeException(error.toString());
+        if (!isValidCreditCard(cartao.numero())) {
+            throw new ValidationException("Numero", "Numero do Cartão inválido.");
         }
-        if(cartao.limite()<pedidoPagar.getTotal()){
-            ValidationError error = new ValidationError("409", "Limite insuficiente");
-            error.addFieldError("limite", "Limite insuficiente");
-            throw new RuntimeException(error.toString());
-        }
+
+        processarPedido(id, cartao.limite());
+        
         pedidoPagar.setStatus("Pago, Crédito");
     }
     @Override
     @Transactional
-    public void PagarPedidoPix(PixDTO pix) {
+    public void PagarPedidoPix(@Valid PixDTO pix) {
         Pedido pedidoPagar = pedidoRepository.findById(pix.idPedido());
-        if(pedidoPagar==null){
-            ValidationError error = new ValidationError("404", "Pedido não encontrado");
-            error.addFieldError("id", "Pedido não encontrado");
-            throw new RuntimeException(error.toString());
+        processarPedido(pix.idPedido(), pix.valor());
+        pedidoPagar.setStatus("Pago, Pix ");
+    }
+    public boolean isValidCreditCard(String cardNumber) {
+        String cleanedCardNumber = cardNumber.replaceAll("\\D", "");
+
+        String reversedCardNumber = new StringBuilder(cleanedCardNumber).reverse().toString();
+
+        int sum = 0;
+        boolean alternate = false;
+
+        for (int i = 0; i < reversedCardNumber.length(); i++) {
+            int digit = Character.getNumericValue(reversedCardNumber.charAt(i));
+
+            if (alternate) {
+                digit *= 2;
+                if (digit > 9) {
+                    digit -= 9;
+                }
+            }
+            sum += digit;
+            alternate = !alternate;
         }
-        if(pedidoPagar.getTotal()>pix.valor()){
-            ValidationError error = new ValidationError("409", "Valor insuficiente");
-            error.addFieldError("valor", "Valor "+(pedidoPagar.getTotal()- pix.valor())+" menor que o total do pedido");
-            throw new RuntimeException(error.toString());
-        }
-        pedidoPagar.setStatus("Pago, Pix");
-        
+        return sum % 10 == 0;
     }
     
 }

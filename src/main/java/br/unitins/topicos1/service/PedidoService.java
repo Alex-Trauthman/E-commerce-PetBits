@@ -15,6 +15,6 @@ public interface PedidoService {
     public List<PedidoResponseDTO> findAll();
     public List<PedidoResponseDTO> findMyPedidos();
     public List<PedidoResponseDTO> findByCliente(Long idCliente);
-    public void PagarPedidoCredito(Long id, CartaoCreditoDTO cartao);
-    public void PagarPedidoPix(PixDTO pix);
+    public void PagarPedidoCredito(Long id,@Valid CartaoCreditoDTO cartao);
+    public void PagarPedidoPix(@Valid PixDTO pix);
 }

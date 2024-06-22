@@ -1,5 +1,6 @@
 package br.unitins.topicos1.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import br.unitins.topicos1.model.Pedido;
@@ -9,6 +10,7 @@ public record PedidoResponseDTO(
     Long id,
     ClienteResponseDTO cliente,
     Double total,
+    LocalDateTime dataExpiracao,
     List<RacaoPedidoResponseDTO> racao,
     List<BrinquedoPedidoResponseDTO> brinquedo,
     List<PetiscoPedidoResponseDTO> petisco,
@@ -38,6 +40,7 @@ public record PedidoResponseDTO(
             pedido.getId(), 
             ClienteResponseDTO.valueOf(pedido.getCliente()),
             pedido.getTotal(),
+            pedido.getDataExpiracao(),
             listaRacao,
             listaBrinquedo,
             listaPetisco,

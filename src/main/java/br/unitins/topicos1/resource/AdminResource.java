@@ -33,7 +33,7 @@ public class AdminResource {
     private static final Logger LOGGER = Logger.getLogger(AdminResource.class);
 
     @GET
-    @RolesAllowed("Admin")
+    @RolesAllowed({"Admin"})
     @Path("/{id}")
     public Response findById(@PathParam("id") Long id) {
         LOGGER.info("Finding admin by ID: {}", id.toString(), (Throwable) null);

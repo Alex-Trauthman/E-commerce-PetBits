@@ -82,6 +82,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public void delete(Long id) {
+        usuarioRepository.deleteById(adminRepository.findById(id).getUsuario().getId());
         adminRepository.deleteById(id);
     }
 
@@ -125,7 +126,7 @@ public class AdminServiceImpl implements AdminService {
     
     @Override
     @Transactional
-    public Response updateSenha(TrocaSenhaDTO senhaDTO){
+    public Response updateSenha(@Valid TrocaSenhaDTO senhaDTO){
         Usuario usuario = usuarioRepository.findByUsername(jsonWebToken.getName());
         String novaSenha = senhaDTO.novaSenha();
         String confirmacao = senhaDTO.confirmacao();

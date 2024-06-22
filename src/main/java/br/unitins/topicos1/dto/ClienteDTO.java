@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Size;
 
 public record ClienteDTO (
     @NotBlank(message = "O CPF não pode ser nulo ou vazio")
-    //testes
     @Size(min = 8, max = 13, message = "O tamanho do CPF deve ser 11 caracteres.")
     String cpf,
     @NotBlank(message = "O nome não pode ser nulo ou vazio")

@@ -50,7 +50,7 @@ public class BrinquedoServiceImpl implements BrinquedoService {
 
     @Override
     @Transactional
-    public void update(Long id, BrinquedoDTO dto) {
+    public void update(Long id,@Valid BrinquedoDTO dto) {
         validarId(id);
         validarMarca(dto.idMarca());
         validarTipoBrinquedo(dto.idTipoBrinquedo());

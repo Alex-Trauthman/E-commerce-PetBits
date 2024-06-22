@@ -33,7 +33,7 @@ public class MarcaResourceTest {
     }
 
     @Test
-    @TestSecurity(user = "admin", roles = "admin")
+    @TestSecurity(user = "admin", roles = "Admin")
     public void findByIdTest() {
         given()
             .when()
@@ -44,7 +44,7 @@ public class MarcaResourceTest {
     }
 
     @Test
-    @TestSecurity(user = "admin", roles = "admin")
+    @TestSecurity(user = "admin", roles = "Admin")
     public void createTest() {
         MarcaDTO dto = new MarcaDTO("TestMarca", "test@test.com", "12345678901234");
 
@@ -61,7 +61,7 @@ public class MarcaResourceTest {
     }
 
     @Test
-    @TestSecurity(user = "admin", roles = "admin")
+    @TestSecurity(user = "admin", roles = "Admin")
     public void updateTest() {
         MarcaDTO dto = new MarcaDTO("UpdatedMarca", "98765432109876", "updated@test.com");
 
@@ -76,7 +76,7 @@ public class MarcaResourceTest {
     }
 
     @Test
-    @TestSecurity(user = "admin", roles = "admin")
+    @TestSecurity(user = "admin", roles = "Admin")
     public void deleteTest() {
         MarcaResponseDTO response = marcaService.create(new MarcaDTO("TestDelete", "99999999999999", "delete@test.com"));
         assertNotNull(response);

@@ -12,7 +12,7 @@ import jakarta.persistence.OneToMany;
 @Entity
 public class Pedido extends DefaultEntity {
 
-    private LocalDateTime data;
+    private LocalDateTime dataExpiracao;
     private Double total;
 
     @ManyToOne
@@ -74,12 +74,12 @@ public class Pedido extends DefaultEntity {
     public void setPetisco(List<PetiscoPedido> petisco) {
         this.petisco = petisco;
     }
-    public LocalDateTime getData() {
-        return data;
+    public LocalDateTime getDataExpiracao() {
+        return dataExpiracao;
     }
 
-    public void setData(LocalDateTime data) {
-        this.data = data;
+    public void setDataExpiracao(LocalDateTime dataExpiracao) {
+        this.dataExpiracao = dataExpiracao;
     }
 
     public Double getTotal() {

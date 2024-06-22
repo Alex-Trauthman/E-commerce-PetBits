@@ -15,7 +15,7 @@ public record AdminDTO (
     String email,
     @NotBlank(message = "O username não pode ser nulo ou vazio")
     @Size(min = 4, max = 60, message = "O tamanho do username deve ser entre 4 e 60 caracteres.")
-    String username, 
+    String username,
     Double salario,
     @NotBlank(message = "O cargo não pode ser nulo ou vazio")
     String cargo,

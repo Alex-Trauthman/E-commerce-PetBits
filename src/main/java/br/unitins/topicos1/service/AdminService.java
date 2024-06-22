@@ -29,7 +29,7 @@ public interface AdminService {
 
     public Response updateUsername(String username);
 
-    public Response updateSenha(TrocaSenhaDTO trocaSenhaDTO);
+    public Response updateSenha(@Valid TrocaSenhaDTO trocaSenhaDTO);
     
     public Response updateEmail(String email);
     

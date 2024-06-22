@@ -29,13 +29,14 @@ public class PedidoResource {
     private static final Logger LOGGER = Logger.getLogger(PedidoResource.class); 
     @GET
     @Path("/{id}")
-    @RolesAllowed("Cliente")
+    @RolesAllowed("Admin")
     public Response findById(@PathParam("id") Long id) {
         LOGGER.info("Finding pedido by id: " + id);
         return Response.ok(pedidoService.findById(id)).build();
     }
 
     @GET
+    @RolesAllowed("Admin")
     public Response findAll() {
         LOGGER.info("Finding all pedidos");
         return Response.ok(pedidoService.findAll()).build();
@@ -58,7 +59,7 @@ public class PedidoResource {
     }
     
     @POST
-    @RolesAllowed("Admin")
+    @RolesAllowed("Cliente")
     public Response create(PedidoDTO dto) {
         LOGGER.info("Creating pedido");
         return Response.status(Status.CREATED).entity(pedidoService.create(dto)).build();

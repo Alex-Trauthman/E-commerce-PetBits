@@ -15,6 +15,7 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -39,8 +40,8 @@ public class ClienteResource {
         return Response.ok(clienteService.findById(id)).build();
     }
     
-    @RolesAllowed("Admin")
     @GET
+    @RolesAllowed("Admin")
     public Response findAll() {
         LOGGER.info("Finding all clientes");    
         return Response.ok(clienteService.findAll()).build();
@@ -48,15 +49,24 @@ public class ClienteResource {
     
     @GET
     @Path("/search/nome/{nome}")
+    @RolesAllowed("Admin")
     public Response findByNome(@PathParam("nome") String nome) {
         LOGGER.info("Finding cliente by name: " + nome);
          return Response.ok(clienteService.findByNome(nome)).build();
     }
     
     @POST
+    @RolesAllowed("Admin")
     public Response create(ClienteDTO dto) {
         LOGGER.info("Creating cliente");
         return Response.status(Status.CREATED).entity(clienteService.create(dto)).build();
+    }
+    @POST
+    @Path("/cadastrar")
+    @RolesAllowed("Cliente")
+    public Response cadastrar(ClienteDTO dto) {
+        LOGGER.info("Cadastrando cliente");
+        return Response.status(Status.CREATED).entity(clienteService.cadastrar(dto)).build();
     }
 
     
@@ -107,5 +117,13 @@ public class ClienteResource {
     public Response updateEndereco(@PathParam("rua") String rua, @PathParam("numero") String numero,  @PathParam("cidade") String cidade, @PathParam("estado") String estado, @PathParam("cep") String cep) {
         LOGGER.info("Updating endereco");
         return clienteService.updateEndereco(rua, numero, cidade, estado, cep);
+    }
+    @PUT
+    @RolesAllowed("Admin")
+    @Path("/{id}")
+    public Response update(@PathParam("id") Long id, ClienteDTO dto) {
+        LOGGER.info("Updating cliente: " + dto);
+        clienteService.updateCliente(id, dto);
+        return Response.status(Status.NO_CONTENT).build();
     }
 }
