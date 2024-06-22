@@ -63,7 +63,6 @@ public class ClienteResource {
     }
     @POST
     @Path("/cadastrar")
-    @RolesAllowed("Cliente")
     public Response cadastrar(ClienteDTO dto) {
         LOGGER.info("Cadastrando cliente");
         return Response.status(Status.CREATED).entity(clienteService.cadastrar(dto)).build();

@@ -167,7 +167,7 @@ public class PedidoServiceImpl implements PedidoService {
     
 
     public void validarQuantidade(Integer quantidadeReal, Integer quantidadePedido) {
-        if (quantidadeReal < quantidadePedido||quantidadePedido<0){
+        if (quantidadeReal < quantidadePedido){
             throw new ValidationException("Quantidade", "Quantidade maior que o estoque");
         }
     }

@@ -1,0 +1,83 @@
+@startuml
+
+class Sabor {
+    - id: Long
+    - sabor : String
+    - intensidade : int
+}
+
+class Marca {
+    - id: Long
+    - nome: String
+}
+
+class Produto {
+    - id: Long
+    - nome: String
+    - preco: double
+    - marca : Marca
+    - animal1 : Animal
+    - animal2 : Animal
+}
+
+class Brinquedo extends Produto {
+    - material: String
+}
+
+class Remedio extends Produto {
+    - pesoAnimal: enum
+    - quantidade: Int
+}
+
+class Racao extends Produto {
+    - peso: enum
+    - sabor: Sabor
+}
+class Petisco extends Produto {
+    - quantidade: Int
+    - sabor: Sabor
+}
+class Usuario {
+    - id: Long
+    - nome: String
+    - senha: String
+}
+
+class Cliente {
+    - email: String
+    - cpf : String
+    - endereco: Endereco
+    - saldo : float
+}
+
+class Funcionario {
+    - email: String
+    - cargo: String
+    - salario: double
+}
+
+
+class Pedido {
+    -cliente: Cliente
+    - id: Long
+    - racao: List<RacaoPedido>
+    - remedio: List<RemedioPedido>
+    - brinquedo: List<BrinquedoPedido>
+    - petiscos: List<PetiscoPedido>
+    - status : String
+    - total : double
+}
+
+Usuario *-- Cliente
+Usuario *-- Funcionario 
+Pedido "n" *-- "1" Cliente 
+Pedido "n" --o "n" Produto 
+
+
+
+Racao "n" o-- "1" Sabor
+Petisco "n" o-- "1" Sabor
+
+Produto "n" o-- "1" Marca
+
+@enduml
